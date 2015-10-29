@@ -10,6 +10,7 @@
 %% ===================================================================
 
 start(_StartType, _StartArgs) ->
+    tanodb_metrics:init(),
     init_http(),
     case tanodb_sup:start_link() of
         {ok, Pid} ->
