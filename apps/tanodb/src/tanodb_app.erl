@@ -10,6 +10,7 @@
 %% ===================================================================
 
 start(_StartType, _StartArgs) ->
+    init_http(),
     case tanodb_sup:start_link() of
         {ok, Pid} ->
             ok = riak_core:register([{vnode_module, tanodb_vnode}]),
@@ -22,3 +23,25 @@ start(_StartType, _StartArgs) ->
 
 stop(_State) ->
     ok.
+
+% private functions
+
+routes() ->
+    [
+     {"/ping", tanodb_http_ping, []}
+    ].
+
+init_http() ->
+    DispatchRoutes = routes(),
+    Dispatch = cowboy_router:compile([{'_', DispatchRoutes}]),
+
+    CowboyOpts = [{env, [{dispatch, Dispatch}]}],
+    ApiAcceptors = envd(http_acceptors, 100),
+    ApiPort = envd(http_port, 8080),
+
+    {ok, _} = cowboy:start_http(http, ApiAcceptors, [{port, ApiPort}],
+                                CowboyOpts).
+
+env(App, Par, Def) -> application:get_env(App, Par, Def).
+envd(Par, Def) -> env(tanodb, Par, Def).
+
