@@ -1,10 +1,12 @@
 -module(tanodb_metrics).
 -export([all/0, init/0]).
 
--export([core_ping/0]).
+-export([core_ping/0, core_put/0, core_get/0]).
 
 -define(ENDPOINTS, [<<"ping">>, <<"metrics">>]).
 -define(METRIC_CORE_PING, [tanodb, core, ping]).
+-define(METRIC_CORE_PUT, [tanodb, core, put]).
+-define(METRIC_CORE_GET, [tanodb, core, get]).
 
 all() ->
  [{tanodb, tanodb_stats()},
@@ -12,13 +14,22 @@ all() ->
   {node, node_stats()},
   {core, core_stats()}].
 
-core_stats() -> [{ping, unwrap_metric_value(?METRIC_CORE_PING)}].
+core_stats() ->
+    [
+     {ping, unwrap_metric_value(?METRIC_CORE_PING)},
+     {put, unwrap_metric_value(?METRIC_CORE_PUT)},
+     {get, unwrap_metric_value(?METRIC_CORE_GET)}
+    ].
 
 core_ping() -> exometer:update(?METRIC_CORE_PING, 1).
+core_put() -> exometer:update(?METRIC_CORE_PUT, 1).
+core_get() -> exometer:update(?METRIC_CORE_GET, 1).
 
 init() ->
     cowboy_exometer:init(?ENDPOINTS),
-    exometer:new(?METRIC_CORE_PING, spiral, [{time_span, 60000}]).
+    exometer:new(?METRIC_CORE_PING, spiral, [{time_span, 60000}]),
+    exometer:new(?METRIC_CORE_PUT, spiral, [{time_span, 60000}]),
+    exometer:new(?METRIC_CORE_GET, spiral, [{time_span, 60000}]).
 
 tanodb_stats() ->
     Stats = riak_core_stat:get_stats(),
