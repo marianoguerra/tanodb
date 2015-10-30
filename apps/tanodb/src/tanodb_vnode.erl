@@ -50,6 +50,15 @@ handle_command({get, Key}, _Sender,
         [Value] ->
             {reply, {found, Partition, {Key, Value}}, State}
     end;
+handle_command({delete, Key}, _Sender,
+               State=#state{table_name=TableName, partition=Partition}) ->
+    case ets:lookup(TableName, Key) of
+        [] ->
+            {reply, {not_found, Partition, Key}, State};
+        [Value] ->
+            true = ets:delete(TableName, Key),
+            {reply, {found, Partition, {Key, Value}}, State}
+    end;
 handle_command(Message, _Sender, State) ->
     lager:warning("unhandled_command ~p", [Message]),
     {noreply, State}.

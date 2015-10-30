@@ -8,6 +8,7 @@
          rest_terminate/2,
          allowed_methods/2,
          resource_exists/2,
+         delete_resource/2,
          content_types_accepted/2,
          content_types_provided/2,
          from_json/2,
@@ -17,6 +18,7 @@
          rest_terminate/2,
          allowed_methods/2,
          resource_exists/2,
+         delete_resource/2,
          content_types_accepted/2,
          content_types_provided/2,
          from_json/2,
@@ -29,12 +31,14 @@ rest_init(Req, _Opts) ->
     {Bucket, Req1} = cowboy_req:binding(bucket, Req),
     {Key, Req2} = cowboy_req:binding(key, Req1),
     {Method, Req3} = method(Req2),
-    {ok, Req2, #state{bucket=Bucket, key=Key, method=Method}}.
+    {ok, Req3, #state{bucket=Bucket, key=Key, method=Method}}.
 
-allowed_methods(Req, State) -> {[<<"GET">>, <<"POST">>], Req, State}.
+allowed_methods(Req, State) ->
+    {[<<"GET">>, <<"POST">>, <<"DELETE">>], Req, State}.
 
-resource_exists(Req, State=#state{bucket=Bucket, key=Key, method=get}) ->
-    case tanodb:get({Bucket, Key}) of
+resource_exists(Req, State=#state{bucket=Bucket, key=Key, method=Method})
+        when Method =:= get; Method =:= delete ->
+    case tanodb:Method({Bucket, Key}) of
         {not_found, _Partition, _BK} ->
             {false, Req, State};
         {found, _Partition, {_BK, {_BK1, Value}}} ->
@@ -60,8 +64,10 @@ from_json(Req, State=#state{bucket=Bucket, key=Key}) ->
         {ok, _Partition} = tanodb:put({Bucket, Key}, Body),
         {true, Req1, State}
     catch
-        T:E -> {false, Req1, State}
+        _T:_E -> {false, Req1, State}
     end.
+
+delete_resource(Req, State=#state{}) -> {true, Req, State}.
 
 rest_terminate(_Req, _State) -> ok.
 terminate(_Reason, _Req, _State) -> ok.
