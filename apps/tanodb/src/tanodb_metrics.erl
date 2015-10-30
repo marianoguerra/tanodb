@@ -3,10 +3,12 @@
 
 -export([core_ping/0]).
 
+-define(ENDPOINTS, [<<"ping">>]).
 -define(METRIC_CORE_PING, [tanodb, core, ping]).
 
 all() ->
  [{tanodb, tanodb_stats()},
+  {http, cowboy_exometer:stats(?ENDPOINTS)},
   {node, node_stats()},
   {core, core_stats()}].
 
@@ -15,6 +17,7 @@ core_stats() -> [{ping, unwrap_metric_value(?METRIC_CORE_PING)}].
 core_ping() -> exometer:update(?METRIC_CORE_PING, 1).
 
 init() ->
+    cowboy_exometer:init(?ENDPOINTS),
     exometer:new(?METRIC_CORE_PING, spiral, [{time_span, 60000}]).
 
 tanodb_stats() ->

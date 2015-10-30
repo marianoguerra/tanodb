@@ -35,8 +35,11 @@ routes() ->
 init_http() ->
     DispatchRoutes = routes(),
     Dispatch = cowboy_router:compile([{'_', DispatchRoutes}]),
+    ApiMiddlewares = [cowboy_exometer, cowboy_router, cowboy_handler],
 
-    CowboyOpts = [{env, [{dispatch, Dispatch}]}],
+    CowboyOpts = [{env, [{dispatch, Dispatch}]},
+                  {onresponse, fun cowboy_exometer:cowboy_response_hook/4},
+                  {middlewares, ApiMiddlewares}],
     ApiAcceptors = envd(http_acceptors, 100),
     ApiPort = envd(http_port, 8080),
 
