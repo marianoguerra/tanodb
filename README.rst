@@ -1,7 +1,9 @@
 tanodb
-===========
+======
 
-A riak_core application
+A riak_core application used as example for `The Little Riak Core Book
+<http://marianoguerra.github.io/little-riak-core-book/>`_. Go read it for
+details on how it's built.
 
 Build
 -----
