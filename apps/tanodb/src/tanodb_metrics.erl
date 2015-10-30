@@ -7,6 +7,7 @@
 
 all() ->
  [{tanodb, tanodb_stats()},
+  {node, node_stats()},
   {core, core_stats()}].
 
 core_stats() -> [{ping, unwrap_metric_value(?METRIC_CORE_PING)}].
@@ -19,6 +20,10 @@ init() ->
 tanodb_stats() ->
     Stats = riak_core_stat:get_stats(),
     lists:map(fun metric_key_to_string/1, Stats).
+
+node_stats() ->
+    [{Abs1, Inc1}] = recon:node_stats_list(1, 0),
+    [{abs, Abs1}, {inc, Inc1}].
 
 metric_key_to_string({K, V}) ->
     StrKeyTokens = lists:map(fun to_string/1, tl(tl(K))),
