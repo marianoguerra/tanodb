@@ -3,7 +3,7 @@
 
 -export([core_ping/0]).
 
--define(ENDPOINTS, [<<"ping">>]).
+-define(ENDPOINTS, [<<"ping">>, <<"metrics">>]).
 -define(METRIC_CORE_PING, [tanodb, core, ping]).
 
 all() ->

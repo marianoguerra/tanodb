@@ -29,7 +29,8 @@ stop(_State) ->
 
 routes() ->
     [
-     {"/ping", tanodb_http_ping, []}
+     {"/ping", tanodb_http_ping, []},
+     {"/metrics", tanodb_http_metrics, []}
     ].
 
 init_http() ->
