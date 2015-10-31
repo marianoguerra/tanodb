@@ -1,6 +1,8 @@
 -module(tanodb_vnode).
 -behaviour(riak_core_vnode).
 
+-include_lib("riak_core/include/riak_core_vnode.hrl").
+
 -export([start_vnode/1,
          init/1,
          terminate/2,
@@ -63,28 +65,49 @@ handle_command(Message, _Sender, State) ->
     lager:warning("unhandled_command ~p", [Message]),
     {noreply, State}.
 
-handle_handoff_command(_Message, _Sender, State) ->
+handle_handoff_command(?FOLD_REQ{foldfun=FoldFun, acc0=Acc0}, _Sender,
+                       State=#state{partition=Partition, table_name=TableName}) ->
+    lager:info("fold req ~p", [Partition]),
+    AccFinal = ets:foldl(fun ({Key, Val}, AccIn) ->
+                                 lager:info("fold fun ~p: ~p", [Key, Val]),
+                                 FoldFun(Key, Val, AccIn)
+                         end, Acc0, TableName),
+    {reply, AccFinal, State};
+
+handle_handoff_command(Message, _Sender, State) ->
+    lager:warning("handoff command ~p, ignoring", [Message]),
     {noreply, State}.
 
-handoff_starting(_TargetNode, State) ->
+handoff_starting(TargetNode, State=#state{partition=Partition}) ->
+    lager:info("handoff starting ~p: ~p", [Partition, TargetNode]),
     {true, State}.
 
-handoff_cancelled(State) ->
+handoff_cancelled(State=#state{partition=Partition}) ->
+    lager:info("handoff cancelled ~p", [Partition]),
     {ok, State}.
 
-handoff_finished(_TargetNode, State) ->
+handoff_finished(TargetNode, State=#state{partition=Partition}) ->
+    lager:info("handoff finished ~p: ~p", [Partition, TargetNode]),
     {ok, State}.
 
-handle_handoff_data(_Data, State) ->
+handle_handoff_data(BinData, State=#state{table_name=TableName}) ->
+    TermData = binary_to_term(BinData),
+    lager:info("handoff data received ~p", [TermData]),
+    {Key, Value} = TermData,
+    ets:insert(TableName, {Key, Value}),
     {reply, ok, State}.
 
-encode_handoff_item(_ObjectName, _ObjectValue) ->
-    <<>>.
+encode_handoff_item(Key, Value) ->
+    term_to_binary({Key, Value}).
 
-is_empty(State) ->
-    {true, State}.
+is_empty(State=#state{table_name=TableName, partition=Partition}) ->
+    IsEmpty = (ets:first(TableName) =:= '$end_of_table'),
+    lager:info("is_empty ~p: ~p", [Partition, IsEmpty]),
+    {IsEmpty, State}.
 
-delete(State) ->
+delete(State=#state{table_name=TableName, partition=Partition}) ->
+    lager:info("delete ~p", [Partition]),
+    ets:delete(TableName),
     {ok, State}.
 
 handle_coverage({keys, Bucket}, _KeySpaces, {_, RefId, _},

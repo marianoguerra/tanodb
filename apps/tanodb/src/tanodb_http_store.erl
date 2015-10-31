@@ -48,8 +48,7 @@ resource_exists(Req, State=#state{bucket=Bucket, key=undefined, method=get}) ->
                      end, #{}, Keys0),
     Keys = maps:keys(KM),
     {true, Req, State#state{value=Keys}};
-resource_exists(Req, State=#state{bucket=Bucket, key=undefined,
-                                  method=delete}) ->
+resource_exists(Req, State=#state{key=undefined, method=delete}) ->
     {false, Req, State};
 resource_exists(Req, State=#state{bucket=Bucket, key=Key, method=Method})
         when Method =:= get; Method =:= delete ->
