@@ -24,6 +24,10 @@ init(_Args) ->
                   {riak_core_vnode_master, start_link, [tanodb_vnode]},
                   permanent, 5000, worker, [riak_core_vnode_master]},
 
+    CoverageFSMs = {tanodb_coverage_fsm_sup,
+                    {tanodb_coverage_fsm_sup, start_link, []},
+                    permanent, infinity, supervisor, [tanodb_coverage_fsm_sup]},
+
     { ok,
         { {one_for_one, 5, 10},
-          [VMaster]}}.
+          [VMaster, CoverageFSMs]}}.

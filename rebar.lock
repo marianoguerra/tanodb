@@ -94,6 +94,10 @@
   {git,"git://github.com/basho/riak_core",
        {ref,"e86aaa62c80a3774ff7c3f74e71e54fa50c93663"}},
   0},
+ {<<"riak_dt">>,
+  {git,"git://github.com/helium/riak_dt.git",
+       {ref,"15d66cb26c2028c1ad1271c359b1d5da213825c3"}},
+  1},
  {<<"riak_ensemble">>,
   {git,"git://github.com/basho/riak_ensemble",
        {ref,"fe1e6c2675b3fa0582ee418e9e6628e1c9a7aff2"}},
@@ -105,4 +109,8 @@
  {<<"setup">>,
   {git,"git://github.com/basho/setup.git",
        {ref,"4878261b8859909569509ad67f6efefb735651f0"}},
-  1}].
+  1},
+ {<<"time_compat">>,
+  {git,"git://github.com/lasp-lang/time_compat",
+       {ref,"adfae4409187cc1a9f79028986e92e8730b5eda5"}},
+  0}].

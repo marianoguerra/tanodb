@@ -87,6 +87,11 @@ is_empty(State) ->
 delete(State) ->
     {ok, State}.
 
+handle_coverage({keys, Bucket}, _KeySpaces, {_, RefId, _},
+                State=#state{table_name=TableName}) ->
+    Keys0 = ets:match(TableName, {{Bucket, '$1'}, '_'}),
+    Keys = lists:map(fun first/1, Keys0),
+    {reply, {RefId, Keys}, State};
 handle_coverage(_Req, _KeySpaces, _Sender, State) ->
     {stop, not_implemented, State}.
 
@@ -95,3 +100,6 @@ handle_exit(_Pid, _Reason, State) ->
 
 terminate(_Reason, _State) ->
     ok.
+
+% private functions
+first([V|_]) -> V.
