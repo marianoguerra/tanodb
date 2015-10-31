@@ -5,6 +5,9 @@
 
 -ignore_xref([ping/0, get/1, delete/1, put/2]).
 
+-define(N, 3).
+-define(W, 3).
+
 %% Public API
 
 %% @doc Pings a random vnode to make sure communication is functional
@@ -18,11 +21,17 @@ get(Key) ->
 
 delete(Key) ->
     tanodb_metrics:core_delete(),
-    send_to_one(Key, {delete, Key}).
+    ReqID = make_ref(),
+    Timeout = 5000,
+    tanodb_write_fsm:delete(?N, Key, self(), ReqID),
+    wait_for_reqid(ReqID, Timeout).
 
 put(Key, Value) ->
     tanodb_metrics:core_put(),
-    send_to_one(Key, {put, Key, Value}).
+    ReqID = make_ref(),
+    Timeout = 5000,
+    tanodb_write_fsm:write(?N, ?W, Key, Value, self(), ReqID),
+    wait_for_reqid(ReqID, Timeout).
 
 keys(Bucket) ->
     tanodb_metrics:core_keys(),
@@ -36,3 +45,10 @@ send_to_one(Key, Cmd) ->
     PrefList = riak_core_apl:get_primary_apl(DocIdx, 1, tanodb),
     [{IndexNode, _Type}] = PrefList,
     riak_core_vnode_master:sync_spawn_command(IndexNode, Cmd, tanodb_vnode_master).
+
+wait_for_reqid(ReqID, Timeout) ->
+    receive
+        {ReqID, {error, Reason}} -> {error, Reason};
+        {ReqID, Val} -> Val
+    after Timeout -> {error, timeout}
+    end.
