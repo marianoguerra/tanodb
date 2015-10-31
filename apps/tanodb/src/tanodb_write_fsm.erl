@@ -25,6 +25,7 @@
                 n :: pos_integer(),
                 w :: pos_integer(),
                 key :: string(),
+                accum = [],
                 action :: write | delete,
                 data = undefined :: term() | undefined,
                 preflist :: riak_core_apl:preflist2(),
@@ -76,11 +77,12 @@ execute(timeout, SD0=#state{req_id=ReqID, key=Key, action=Action, data=Data,
     {next_state, waiting, SD0}.
 
 %% @doc Wait for W write reqs to respond.
-waiting({ReqID, Result}, SD0=#state{from=From, num_w=NumW0, w=W}) ->
+waiting({ReqID, Result}, SD0=#state{from=From, num_w=NumW0, w=W, accum=Accum}) ->
     NumW = NumW0 + 1,
-    SD = SD0#state{num_w=NumW},
+    Accum1 = [Result|Accum],
+    SD = SD0#state{num_w=NumW, accum=Accum1},
     if NumW =:= W ->
-           From ! {ReqID, Result},
+           From ! {ReqID, {ok, Accum1}},
            {stop, normal, SD};
        true -> {next_state, waiting, SD}
     end.
