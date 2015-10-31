@@ -10,7 +10,7 @@
 %% @doc port to listen to for HTTP API
 {mapping, "http.port", "tanodb.http_port", [
   {datatype, integer},
-  {default, 8080}
+  {default, {{http_port}} }
 ]}.
 
 %% @doc number of acceptors to user for HTTP API
