@@ -36,6 +36,21 @@ rest_init(Req, _Opts) ->
 allowed_methods(Req, State) ->
     {[<<"GET">>, <<"POST">>, <<"DELETE">>], Req, State}.
 
+add_keys([], Map) -> Map;
+add_keys(Keys, Map) ->
+    lists:foldl(fun (Key, MapIn) -> maps:put(Key, true, MapIn) end, Map, Keys).
+
+
+resource_exists(Req, State=#state{bucket=Bucket, key=undefined, method=get}) ->
+    {ok, Keys0} = tanodb:keys(Bucket),
+    KM = lists:foldl(fun ({_Partition, _Node, VKeys}, CurKeys) ->
+                             add_keys(VKeys, CurKeys)
+                     end, #{}, Keys0),
+    Keys = maps:keys(KM),
+    {true, Req, State#state{value=Keys}};
+resource_exists(Req, State=#state{bucket=Bucket, key=undefined,
+                                  method=delete}) ->
+    {false, Req, State};
 resource_exists(Req, State=#state{bucket=Bucket, key=Key, method=Method})
         when Method =:= get; Method =:= delete ->
     case tanodb:Method({Bucket, Key}) of

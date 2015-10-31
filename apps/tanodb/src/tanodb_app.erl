@@ -71,6 +71,7 @@ routes() ->
     [
      {"/ping", tanodb_http_ping, []},
      {"/metrics", tanodb_http_metrics, []},
+     {"/store/:bucket", tanodb_http_store, []},
      {"/store/:bucket/:key", tanodb_http_store, []},
      {"/admin/:action", rcs_cowboy_handler, RcsOpts},
      {"/admin/:action/:param1", rcs_cowboy_handler, RcsOpts},
