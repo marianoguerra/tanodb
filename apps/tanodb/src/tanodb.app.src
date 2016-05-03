@@ -9,7 +9,9 @@
                   stdlib,
                   sasl,
                   riak_core,
-                  setup
+                  setup,
+                  cowboy,
+                  jsx
                  ]},
   {mod, { tanodb_app, []}},
   {env, []}

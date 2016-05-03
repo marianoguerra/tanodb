@@ -15,3 +15,4 @@
 {platform_lib_dir,  "./lib"}.
 {platform_log_dir,  "./log"}.
 
+{crash_dump, "erl_crash.dump"}.
