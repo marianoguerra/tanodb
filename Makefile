@@ -6,6 +6,9 @@ SHELL = /bin/bash
 
 release:
 	$(REBAR) release
+	mkdir -p _build/default/rel/tanodb_data/
+	mkdir -p _build/default/rel/tanodb_config/
+	cp _build/default/rel/tanodb/etc/* _build/default/rel/tanodb_config/
 
 compile:
 	$(REBAR) compile
