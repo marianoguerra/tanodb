@@ -5,7 +5,7 @@
 {web_ip,            "127.0.0.1"}.
 {web_port,          8098}.
 {handoff_port,      8099}.
-{handoff_ip,        "127.0.0.1"}.
+{handoff_ip,        "127.1.0.1"}.
 {sasl_error_log,    "./log/sasl-error.log"}.
 {sasl_log_dir,      "./log/sasl"}.
 
