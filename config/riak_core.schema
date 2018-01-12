@@ -497,7 +497,7 @@ end
 {mapping, "handoff.ip", "riak_core.handoff_ip", [
   {default, "{{handoff_ip}}" },
   {datatype, string},
-  {validators, ["valid_ipaddr", "not_localhost"]},
+  {validators, ["valid_ipaddr"]},
   hidden
 ]}.
 

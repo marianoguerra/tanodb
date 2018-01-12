@@ -29,13 +29,13 @@ devrel2:
 	$(REBAR) as dev2 release
 	mkdir -p _build/dev2/rel/tanodb_data/
 	mkdir -p _build/dev2/rel/tanodb_config/
-	cp _build/dev1/rel/tanodb/etc/* _build/dev1/rel/tanodb_config/
+	cp _build/dev2/rel/tanodb/etc/* _build/dev2/rel/tanodb_config/
 
 devrel3:
 	$(REBAR) as dev3 release
 	mkdir -p _build/dev3/rel/tanodb_data/
 	mkdir -p _build/dev3/rel/tanodb_config/
-	cp _build/dev1/rel/tanodb/etc/* _build/dev1/rel/tanodb_config/
+	cp _build/dev3/rel/tanodb/etc/* _build/dev3/rel/tanodb_config/
 
 devrel: devrel1 devrel2 devrel3
 
