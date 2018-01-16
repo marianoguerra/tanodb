@@ -19,6 +19,7 @@ RUNNER_BASE_DIR=${RUNNER_SCRIPT_DIR%/*}
 RUNNER_ETC_DIR=$RUNNER_BASE_DIR/etc
 RUNNER_LOG_DIR=$RUNNER_BASE_DIR/log
 
+LAST_GENERATED_ARGS=$(ls ${RUNNER_BASE_DIR}/generated.conf/*.args | sort -n | tail -n1 )                                                                                                                     
 RUNNER_USER=
 
 WHOAMI=$(whoami)
@@ -38,9 +39,9 @@ fi
 cd $RUNNER_BASE_DIR
 
 # Extract the target node name from node.args
-NAME_ARG=`egrep "^ *-s?name" $RUNNER_ETC_DIR/vm.args`
+NAME_ARG=`egrep "^ *-s?name" ${LAST_GENERATED_ARGS}`
 if [ -z "$NAME_ARG" ]; then
-    echo "vm.args needs to have either -name or -sname parameter."
+    echo "${LAST_GENERATED_ARGS} needs to have either -name or -sname parameter."
     exit 1
 fi
 
@@ -60,9 +61,9 @@ else
 fi
 
 # Extract the target cookie
-COOKIE_ARG=`grep '\-setcookie' $RUNNER_ETC_DIR/vm.args`
+COOKIE_ARG=`grep '\-setcookie' ${LAST_GENERATED_ARGS}`
 if [ -z "$COOKIE_ARG" ]; then
-    echo "vm.args needs to have a -setcookie parameter."
+    echo "${LAST_GENERATED_ARGS} args needs to have a -setcookie parameter."
     exit 1
 fi
 
