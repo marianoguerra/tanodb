@@ -39,13 +39,13 @@ devrel3:
 
 devrel: devrel1 devrel2 devrel3
 
-dev1-console:
+dev-console1:
 	$(BASEDIR)/_build/dev1/rel/tanodb/bin/$(APPNAME) console
 
-dev2-console:
+dev-console2:
 	$(BASEDIR)/_build/dev2/rel/tanodb/bin/$(APPNAME) console
 
-dev3-console:
+dev-console3:
 	$(BASEDIR)/_build/dev3/rel/tanodb/bin/$(APPNAME) console
 
 devrel-start:
