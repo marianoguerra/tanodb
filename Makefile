@@ -73,10 +73,10 @@ devrel-status:
 	$(BASEDIR)/_build/dev1/rel/tanodb/bin/$(APPNAME)-admin member-status
 
 devrel-ping:
-	for d in $(BASEDIR)/_build/dev*; do $$d/rel/tanodb/bin/$(APPNAME) ping; done
+	for d in $(BASEDIR)/_build/dev*; do $$d/rel/tanodb/bin/$(APPNAME) ping; true; done
 
 devrel-stop:
-	for d in $(BASEDIR)/_build/dev*; do $$d/rel/tanodb/bin/$(APPNAME) stop; done
+	for d in $(BASEDIR)/_build/dev*; do $$d/rel/tanodb/bin/$(APPNAME) stop; true; done
 
 start:
 	$(BASEDIR)/$(RELPATH)/bin/$(APPNAME) start
