@@ -10,7 +10,7 @@ Build
 
 ::
 
-    rebar3 release
+    make release
 
 Test
 ----

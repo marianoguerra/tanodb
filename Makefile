@@ -39,6 +39,15 @@ devrel3:
 
 devrel: devrel1 devrel2 devrel3
 
+dev-attach1:
+	$(BASEDIR)/_build/dev1/rel/tanodb/bin/$(APPNAME) attach
+
+dev-attach2:
+	$(BASEDIR)/_build/dev2/rel/tanodb/bin/$(APPNAME) attach
+
+dev-attach3:
+	$(BASEDIR)/_build/dev3/rel/tanodb/bin/$(APPNAME) attach
+
 dev-console1:
 	$(BASEDIR)/_build/dev1/rel/tanodb/bin/$(APPNAME) console
 
@@ -64,10 +73,10 @@ devrel-status:
 	$(BASEDIR)/_build/dev1/rel/tanodb/bin/$(APPNAME)-admin member-status
 
 devrel-ping:
-	for d in $(BASEDIR)/_build/dev*; do $$d/rel/tanodb/bin/$(APPNAME) ping; done
+	for d in $(BASEDIR)/_build/dev*; do $$d/rel/tanodb/bin/$(APPNAME) ping; true; done
 
 devrel-stop:
-	for d in $(BASEDIR)/_build/dev*; do $$d/rel/tanodb/bin/$(APPNAME) stop; done
+	for d in $(BASEDIR)/_build/dev*; do $$d/rel/tanodb/bin/$(APPNAME) stop; true; done
 
 start:
 	$(BASEDIR)/$(RELPATH)/bin/$(APPNAME) start
